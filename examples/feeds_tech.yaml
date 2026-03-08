@@ -1,0 +1,46 @@
+# Tech-focused feed list for rss-digest
+# A curated starter pack of reliable tech RSS feeds.
+# Use with: rss-digest fetch --config feeds_tech.yaml
+
+feeds:
+  # News & commentary
+  - url: "https://hnrss.org/frontpage"
+    name: "Hacker News"
+
+  - url: "https://feeds.arstechnica.com/arstechnica/index"
+    name: "Ars Technica"
+
+  - url: "https://www.wired.com/feed/rss"
+    name: "Wired"
+
+  - url: "https://techcrunch.com/feed/"
+    name: "TechCrunch"
+
+  # Developer tools & open source
+  - url: "https://github.blog/feed/"
+    name: "GitHub Blog"
+
+  - url: "https://changelog.com/feed"
+    name: "The Changelog"
+
+  # Security
+  - url: "https://krebsonsecurity.com/feed/"
+    name: "Krebs on Security"
+
+  - url: "https://feeds.feedburner.com/TheHackersNews"
+    name: "The Hacker News"
+
+  # AI / ML
+  - url: "https://bair.berkeley.edu/blog/feed.xml"
+    name: "BAIR Blog"
+
+  - url: "https://openai.com/blog/rss.xml"
+    name: "OpenAI Blog"
+
+channels:
+  signal:
+    account: "+15555550100"
+    recipient: "+15555550200"
+
+max_entries: 15
+ai_summary: false

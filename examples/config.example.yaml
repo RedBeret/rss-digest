@@ -1,0 +1,49 @@
+# rss-digest example configuration
+# Copy this to config.yaml and edit to match your setup.
+
+# ── Feeds ────────────────────────────────────────────────────────────────────
+feeds:
+  - url: "https://hnrss.org/frontpage"
+    name: "Hacker News"
+
+  - url: "https://feeds.arstechnica.com/arstechnica/index"
+    name: "Ars Technica"
+
+  - url: "https://www.wired.com/feed/rss"
+    name: "Wired"
+
+# ── Delivery channels ─────────────────────────────────────────────────────────
+# Configure at least one channel to send digests.
+
+channels:
+  # Signal — requires signal-cli installed and registered
+  signal:
+    account: "+15555550100"     # Your registered Signal number
+    recipient: "+15555550200"   # Who to send to
+
+  # Slack — create an incoming webhook at api.slack.com/messaging/webhooks
+  slack:
+    webhook_url: "https://hooks.slack.com/services/REPLACE/ME/HERE"
+
+  # Email — set SMTP_PASSWORD env var, do NOT put the password here
+  email:
+    smtp_host: "smtp.gmail.com"
+    smtp_port: 587
+    from: "you@gmail.com"
+    to: "you@gmail.com"
+
+# ── Delivery settings ─────────────────────────────────────────────────────────
+
+# Default channel when --channel is not specified on the command line
+default_channel: "signal"
+
+# Maximum number of new entries to include per digest
+max_entries: 10
+
+# Optional: use Claude to write a short AI summary (requires ANTHROPIC_API_KEY)
+ai_summary: false
+
+# ── Storage ───────────────────────────────────────────────────────────────────
+# Where to store the deduplication database.
+# Defaults to ~/.rss-digest/feeds.db — override here if needed.
+# db_path: "/home/user/.rss-digest/feeds.db"
