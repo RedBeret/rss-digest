@@ -1,0 +1,34 @@
+services:
+  rss-digest:
+    build: .
+    image: rss-digest:latest
+    volumes:
+      # Mount your config file here
+      - ./config.yaml:/config/config.yaml:ro
+      # Persistent storage for deduplication database
+      - rss-digest-data:/data
+    environment:
+      RSS_DIGEST_DB: /data/feeds.db
+      # For email channel — never put passwords in this file
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+    # Run digest daily at 7:00 AM UTC via ofelia or similar scheduler
+    # For standalone cron, use the rss-digest-cron service below
+
+  # Optional: cron-based scheduler using supercronic
+  rss-digest-cron:
+    build: .
+    image: rss-digest:latest
+    volumes:
+      - ./config.yaml:/config/config.yaml:ro
+      - rss-digest-data:/data
+      - ./crontab:/etc/crontab:ro
+    environment:
+      RSS_DIGEST_DB: /data/feeds.db
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+    # Install supercronic and run it as entrypoint if you want this service
+    # Otherwise, use host cron to invoke: docker compose run rss-digest digest
+    profiles:
+      - cron
+
+volumes:
+  rss-digest-data:

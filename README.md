@@ -137,6 +137,31 @@ Create an [incoming webhook](https://api.slack.com/messaging/webhooks) in your S
 
 Set `SMTP_PASSWORD` environment variable. Works with Gmail (use an App Password), Fastmail, or any SMTP server.
 
+## Example Output
+
+```
+📰 Daily Digest — 2026-03-08
+
+── Hacker News ──────────────────────────────────────────────
+• Ask HN: What's your morning reading routine? (432 points)
+  https://news.ycombinator.com/item?id=39123456
+
+• Show HN: I built a tool to track RSS feeds from the terminal (87 points)
+  https://news.ycombinator.com/item?id=39124001
+
+• The unreasonable effectiveness of plain text (211 points)
+  https://hnrss.org/item/39124200
+
+── Ars Technica ─────────────────────────────────────────────
+• EU regulators open investigation into major cloud providers
+  https://arstechnica.com/tech-policy/2026/03/eu-cloud-probe/
+
+• Rust achieves memory safety without garbage collection overhead
+  https://arstechnica.com/information-technology/2026/03/rust-memory/
+
+5 new entries across 2 feeds. Digest sent via Signal.
+```
+
 ## Run on a Schedule
 
 **Cron (daily at 7am):**
@@ -144,9 +169,49 @@ Set `SMTP_PASSWORD` environment variable. Works with Gmail (use an App Password)
 0 7 * * * /usr/local/bin/rss-digest digest --config /home/user/rss-digest.yaml --channel signal
 ```
 
-**Docker:**
+**systemd timer** (`~/.config/systemd/user/rss-digest.timer`):
+```ini
+[Unit]
+Description=RSS Digest daily run
+
+[Timer]
+OnCalendar=*-*-* 07:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+## Docker
+
+Self-hosted deployment with persistent dedup database:
+
 ```bash
-docker-compose up -d
+# Clone and build
+git clone https://github.com/RedBeret/rss-digest.git
+cd rss-digest
+
+# Create your config
+cp examples/config.example.yaml config.yaml
+# Edit config.yaml with your feeds and channel settings
+
+# Build image
+docker build -t rss-digest .
+
+# Run a digest (one-shot)
+docker run --rm \
+  -v $(pwd)/config.yaml:/config/config.yaml:ro \
+  -v rss-digest-data:/data \
+  -e SMTP_PASSWORD="${SMTP_PASSWORD}" \
+  rss-digest digest --config /config/config.yaml --channel slack
+
+# Using docker compose (with volume persistence)
+docker compose run --rm rss-digest digest --config /config/config.yaml --channel signal
+```
+
+**Add to host cron for daily digests:**
+```cron
+0 7 * * * docker compose -f /home/user/rss-digest/docker-compose.yml run --rm rss-digest digest --config /config/config.yaml --channel signal
 ```
 
 ## Development
